@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "765232867024",
+    "project_id": "fcm-rn-3ef6a",
+    "storage_bucket": "fcm-rn-3ef6a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:765232867024:android:797359cab685b5f8a760d5",
+        "android_client_info": {
+          "package_name": "com.fcmrn"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "765232867024-8ptp67aiugjn04kmgu5s7bhncafm3k5d.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCnyncDPx7CgafmJ9iFSU63YiVeNsnyCzY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "765232867024-8ptp67aiugjn04kmgu5s7bhncafm3k5d.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "765232867024-087o2np1mp1qnlr6kcncsvkpg2lo7u6u.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "org.reactjs.native.example.FCMRN"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
