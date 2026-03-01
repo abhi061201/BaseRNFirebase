@@ -15,7 +15,7 @@ const SplashScreen: React.FC = () => {
 
       // Navigate based on auth state
       if (isLoggedIn) {
-        navigation.replace('Home');
+        navigation.replace('Dashboard');
       } else {
         navigation.replace('Login');
       }
@@ -30,7 +30,6 @@ const SplashScreen: React.FC = () => {
   return (
     <SafeScreen
       statusBarColor="#3B82F6"
-      barStyle="light-content"
       gradientColors={['#3B82F6', '#2563EB', '#1D4ED8']}
       style={styles.container}>
       <View style={styles.content}>

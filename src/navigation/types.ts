@@ -5,6 +5,7 @@ export type RootStackParamList = {
   Login: undefined;
   Signup: undefined;
   Home: undefined;
+  Dashboard: undefined;
   Profile: undefined;
   Settings: undefined;
 };
@@ -20,4 +21,14 @@ declare global {
   namespace ReactNavigation {
     interface RootParamList extends RootStackParamList {}
   }
+}
+
+export enum RootStackScreens {
+  Splash = 'Splash',
+  Login = 'Login',
+  Signup = 'Signup',
+  Home = 'Home',
+  Dashboard = 'Dashboard',
+  Profile = 'Profile',
+  Settings = 'Settings',
 }

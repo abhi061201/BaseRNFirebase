@@ -11,21 +11,35 @@ class Logger {
   /**
    * Regular log
    */
-  log(tag: Tag, ...args: any[]) {
+  log(tag: Tag | string, ...args: any[]) {
     this.originalConsole.log(tag, ...args);
+  }
+
+  /**
+   * Info log
+   */
+  info(tag: Tag | string, ...args: any[]) {
+    this.originalConsole.log('[INFO]', tag, ...args);
+  }
+
+  /**
+   * Warning log
+   */
+  warn(tag: Tag | string, ...args: any[]) {
+    this.originalConsole.log('[WARN]', tag, ...args);
   }
 
   /**
    * Error log
    */
-  error(tag: Tag,...args: any[]) {
+  error(tag: Tag | string,...args: any[]) {
     this.originalConsole.error(tag,...args);
   }
 
   /**
    * Debug log
    */
-  debug(tag: Tag,...args: any[]) {
+  debug(tag: Tag | string,...args: any[]) {
     this.originalConsole.debug(tag,...args);
   }
 

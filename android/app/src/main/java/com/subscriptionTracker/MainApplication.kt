@@ -1,4 +1,4 @@
-package com.fcmrn
+package com.subscriptionTracker
 
 import android.app.Application
 import com.facebook.react.PackageList

@@ -8,14 +8,16 @@ import SignupScreen from '@/screens/Auth/SignUp/Signup';
 import HomeScreen from '@/screens/Home/HomeScreen';
 import ProfileScreen from '@/screens/Profile';
 import SettingsScreen from '@/screens/Settings';
+import DashboardScreen from '@/screens/Dashboard';
 import { Platform } from 'react-native';
+import { RootStackScreens } from './types';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 const RootNavigator: React.FC = () => {
   return (
     <Stack.Navigator
-      initialRouteName="Splash"
+      initialRouteName={RootStackScreens.Dashboard}
       screenOptions={{
         headerShown: false,
         animation: Platform.OS == 'android'? 'simple_push':'slide_from_right', 
@@ -23,12 +25,13 @@ const RootNavigator: React.FC = () => {
         fullScreenGestureEnabled: true,
         gestureEnabled: true,
       }}>
-      <Stack.Screen name="Splash" component={SplashScreen} />
-      <Stack.Screen name="Login" component={LoginScreen} />
-      <Stack.Screen name="Signup" component={SignupScreen} />
-      <Stack.Screen name="Home" component={HomeScreen} />
-      <Stack.Screen name="Profile" component={ProfileScreen} />
-      <Stack.Screen name="Settings" component={SettingsScreen} />
+      <Stack.Screen name={RootStackScreens.Splash} component={SplashScreen} />
+      <Stack.Screen name={RootStackScreens.Login} component={LoginScreen} />
+      <Stack.Screen name={RootStackScreens.Signup} component={SignupScreen} />
+      <Stack.Screen name={RootStackScreens.Home} component={HomeScreen} />
+      <Stack.Screen name={RootStackScreens.Dashboard} component={DashboardScreen} />
+      <Stack.Screen name={RootStackScreens.Profile} component={ProfileScreen} />
+      <Stack.Screen name={RootStackScreens.Settings} component={SettingsScreen} />
     </Stack.Navigator>
   );
 };

@@ -1,202 +1,242 @@
-import React, { useState } from 'react';
+/**
+ * Settings Screen
+ * 
+ * App configuration and preferences
+ */
+
+import React, { useEffect } from 'react';
 import {
-  StyleSheet,
   View,
+  Text,
+  StyleSheet,
   ScrollView,
-  Switch,
   TouchableOpacity,
+  Switch,
+  Alert,
 } from 'react-native';
-import { useNavigation } from '@react-navigation/native';
-import { Text, SafeScreen } from '@/core/components';
-import type { SettingsScreenProps } from '@/navigation/types';
+import { useSettingsStore } from '@/store';
+import { Currency } from '@/types/subscription.types';
 
-const SettingsScreen: React.FC = () => {
-  const navigation = useNavigation<SettingsScreenProps['navigation']>();
-  
-  const [notifications, setNotifications] = useState(true);
-  const [darkMode, setDarkMode] = useState(false);
-  const [biometrics, setBiometrics] = useState(false);
+const MOCK_USER_ID = 'user_demo_123';
 
-  const handleBackPress = () => {
-    navigation.goBack();
-    return true;
+export const SettingsScreen: React.FC = () => {
+  const {
+    currency,
+    notificationsEnabled,
+    theme,
+    defaultReminderDays,
+    fetchSettings,
+    setCurrency,
+    setNotificationsEnabled,
+    setTheme,
+    setDefaultReminderDays,
+  } = useSettingsStore();
+
+  useEffect(() => {
+    fetchSettings(MOCK_USER_ID);
+  }, []);
+
+  const handleCurrencyChange = () => {
+    const currencies: Currency[] = ['USD', 'INR', 'EUR', 'GBP', 'AUD'];
+    Alert.alert(
+      'Select Currency',
+      'Choose your preferred currency',
+      currencies.map((curr) => ({
+        text: curr,
+        onPress: () => setCurrency(curr),
+      }))
+    );
+  };
+
+  const handleThemeChange = () => {
+    const themes = ['light', 'dark', 'system'] as const;
+    Alert.alert(
+      'Select Theme',
+      'Choose your app theme',
+      themes.map((t) => ({
+        text: t.charAt(0).toUpperCase() + t.slice(1),
+        onPress: () => setTheme(t),
+      }))
+    );
+  };
+
+  const handleReminderDaysChange = () => {
+    Alert.prompt(
+      'Default Reminder Days',
+      'How many days before billing should we remind you?',
+      [
+        { text: 'Cancel', style: 'cancel' },
+        {
+          text: 'Save',
+          onPress: (value) => {
+            const days = parseInt(value || '3');
+            if (!isNaN(days) && days >= 0) {
+              setDefaultReminderDays(days);
+            }
+          },
+        },
+      ],
+      'plain-text',
+      String(defaultReminderDays)
+    );
+  };
+
+  const handleExportData = () => {
+    // TODO: Implement CSV export
+    Alert.alert('Export Data', 'CSV export will be available soon!');
   };
 
   return (
-    <SafeScreen
-      statusBarColor="#FFFFFF"
-      barStyle="dark-content"
-      onBackPress={handleBackPress}
-      style={styles.container}>
-      <ScrollView>
-        <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-            <Text style={styles.backText}>‹ Back</Text>
-          </TouchableOpacity>
-          <Text size="xxl" style={styles.title}>Settings</Text>
-        </View>
+    <ScrollView style={styles.container}>
+      {/* Header */}
+      <View style={styles.header}>
+        <Text style={styles.title}>Settings</Text>
+      </View>
 
+      {/* General Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>General</Text>
+
+        <TouchableOpacity style={styles.settingRow} onPress={handleCurrencyChange}>
+          <View>
+            <Text style={styles.settingLabel}>Currency</Text>
+            <Text style={styles.settingValue}>{currency || 'USD'}</Text>
+          </View>
+          <Text style={styles.chevron}>›</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity style={styles.settingRow} onPress={handleThemeChange}>
+          <View>
+            <Text style={styles.settingLabel}>Theme</Text>
+            <Text style={styles.settingValue}>
+              {theme ? theme.charAt(0).toUpperCase() + theme.slice(1) : 'System'}
+            </Text>
+          </View>
+          <Text style={styles.chevron}>›</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Notifications Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Notifications</Text>
-        
-        <View style={styles.settingItem}>
-          <View>
-            <Text style={styles.settingText}>Push Notifications</Text>
-            <Text style={styles.settingDescription}>Receive push notifications</Text>
-          </View>
-          <Switch
-            value={notifications}
-            onValueChange={setNotifications}
-            trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
-            thumbColor={notifications ? '#3B82F6' : '#F3F4F6'}
-          />
-        </View>
-      </View>
 
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Appearance</Text>
-        
-        <View style={styles.settingItem}>
-          <View>
-            <Text style={styles.settingText}>Dark Mode</Text>
-            <Text style={styles.settingDescription}>Use dark theme</Text>
+        <View style={styles.settingRow}>
+          <View style={{ flex: 1 }}>
+            <Text style={styles.settingLabel}>Push Notifications</Text>
+            <Text style={styles.settingDescription}>
+              Receive alerts for upcoming payments
+            </Text>
           </View>
           <Switch
-            value={darkMode}
-            onValueChange={setDarkMode}
-            trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
-            thumbColor={darkMode ? '#3B82F6' : '#F3F4F6'}
-          />
-        </View>
-      </View>
-
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Security</Text>
-        
-        <View style={styles.settingItem}>
-          <View>
-            <Text style={styles.settingText}>Biometric Login</Text>
-            <Text style={styles.settingDescription}>Use Face ID or fingerprint</Text>
-          </View>
-          <Switch
-            value={biometrics}
-            onValueChange={setBiometrics}
-            trackColor={{ false: '#D1D5DB', true: '#93C5FD' }}
-            thumbColor={biometrics ? '#3B82F6' : '#F3F4F6'}
+            value={notificationsEnabled ?? true}
+            onValueChange={setNotificationsEnabled}
+            trackColor={{ false: '#E0E0E0', true: '#4CAF50' }}
+            thumbColor="#FFFFFF"
           />
         </View>
 
-        <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.settingText}>Change Password</Text>
-          <Text style={styles.menuArrow}>›</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.settingText}>Two-Factor Authentication</Text>
-          <Text style={styles.menuArrow}>›</Text>
+        <TouchableOpacity
+          style={styles.settingRow}
+          onPress={handleReminderDaysChange}
+        >
+          <View>
+            <Text style={styles.settingLabel}>Default Reminder</Text>
+            <Text style={styles.settingValue}>
+              {defaultReminderDays || 3} days before billing
+            </Text>
+          </View>
+          <Text style={styles.chevron}>›</Text>
         </TouchableOpacity>
       </View>
 
+      {/* Data Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Data</Text>
-        
-        <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.settingText}>Clear Cache</Text>
-          <Text style={styles.menuArrow}>›</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.menuItem}>
-          <Text style={styles.settingText}>Export Data</Text>
-          <Text style={styles.menuArrow}>›</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={[styles.menuItem, styles.dangerItem]}>
-          <Text style={styles.dangerText}>Delete Account</Text>
-          <Text style={styles.menuArrow}>›</Text>
+        <TouchableOpacity style={styles.settingRow} onPress={handleExportData}>
+          <View>
+            <Text style={styles.settingLabel}>Export Data</Text>
+            <Text style={styles.settingDescription}>Download your data as CSV</Text>
+          </View>
+          <Text style={styles.chevron}>›</Text>
         </TouchableOpacity>
       </View>
-      </ScrollView>
-    </SafeScreen>
+
+      {/* About Section */}
+      <View style={styles.section}>
+        <Text style={styles.sectionTitle}>About</Text>
+
+        <View style={styles.settingRow}>
+          <Text style={styles.settingLabel}>Version</Text>
+          <Text style={styles.settingValue}>1.0.0</Text>
+        </View>
+
+        <View style={styles.settingRow}>
+          <Text style={styles.settingLabel}>Made with</Text>
+          <Text style={styles.settingValue}>❤️ for Gen-Z/Millennials</Text>
+        </View>
+      </View>
+
+      <View style={{ height: 40 }} />
+    </ScrollView>
   );
 };
 
-export default React.memo(SettingsScreen);
-
 const styles = StyleSheet.create({
   container: {
-    backgroundColor: '#F9FAFB',
+    flex: 1,
+    backgroundColor: '#F8F9FA',
   },
   header: {
+    padding: 20,
     paddingTop: 60,
-    paddingBottom: 20,
-    paddingHorizontal: 20,
     backgroundColor: '#FFFFFF',
     borderBottomWidth: 1,
-    borderBottomColor: '#E5E7EB',
-  },
-  backButton: {
-    marginBottom: 8,
-  },
-  backText: {
-    fontSize: 16,
-    color: '#3B82F6',
-    fontWeight: '500',
+    borderBottomColor: '#E0E0E0',
   },
   title: {
+    fontSize: 32,
     fontWeight: '700',
-    color: '#1F2937',
+    color: '#1A1A1A',
   },
   section: {
-    backgroundColor: '#FFFFFF',
     marginTop: 24,
-    paddingHorizontal: 20,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: '#E5E7EB',
   },
   sectionTitle: {
-    fontSize: 12,
+    fontSize: 14,
     fontWeight: '600',
-    color: '#9CA3AF',
+    color: '#666666',
+    marginBottom: 12,
+    marginLeft: 20,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
-    paddingTop: 16,
-    paddingBottom: 8,
   },
-  settingItem: {
+  settingRow: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+    paddingHorizontal: 20,
     paddingVertical: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
+    borderBottomColor: '#F0F0F0',
   },
-  settingText: {
+  settingLabel: {
     fontSize: 16,
-    color: '#1F2937',
+    color: '#1A1A1A',
+    marginBottom: 4,
+  },
+  settingValue: {
+    fontSize: 14,
+    color: '#666666',
   },
   settingDescription: {
     fontSize: 12,
-    color: '#9CA3AF',
-    marginTop: 2,
+    color: '#999999',
+    marginTop: 4,
   },
-  menuItem: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    paddingVertical: 16,
-    borderBottomWidth: 1,
-    borderBottomColor: '#F3F4F6',
-  },
-  menuArrow: {
-    fontSize: 20,
-    color: '#9CA3AF',
-  },
-  dangerItem: {
-    borderBottomWidth: 0,
-  },
-  dangerText: {
-    fontSize: 16,
-    color: '#EF4444',
+  chevron: {
+    fontSize: 24,
+    color: '#CCCCCC',
   },
 });
